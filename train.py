@@ -16,13 +16,15 @@ def estimate_loss(model, get_batch, eval_iters):
     model.train()
     return out
 
-def train_model(model, get_batch, max_iters, eval_iters, eval_interval, learning_rate, checkpoint_path=None):
+def train_model(model, get_batch, max_iters, eval_iters, eval_interval, learning_rate, checkpoint_path='./'):
     optimizer = AdamW(model.parameters(), lr=learning_rate)
     start_iter = 0
 
     # Load checkpoint if provided
     if checkpoint_path and os.path.exists(checkpoint_path):
         start_iter = load_checkpoint(model, optimizer, checkpoint_path)
+
+    print("Started training ...")
 
     for iter in range(start_iter, max_iters):
         if iter % eval_interval == 0:
@@ -39,6 +41,7 @@ def train_model(model, get_batch, max_iters, eval_iters, eval_interval, learning
         loss.backward()
         optimizer.step()
 
+    print("Finished training")
     print("Final Loss:", loss.item())
 
 
