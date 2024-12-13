@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from config import device, block_size, n_layer, n_head, n_embd, dropout
 
 class Head(nn.Module):
     def __init__(self, head_size):
