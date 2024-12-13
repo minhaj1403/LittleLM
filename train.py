@@ -45,8 +45,6 @@ def train_model(model, get_batch, max_iters, eval_iters, eval_interval, learning
     print("Final Loss:", loss.item())
 
 
-    print("Final Loss:", loss.item())
-
 def save_checkpoint(model, optimizer, epoch, file_path):
     checkpoint = {
         'model_state_dict': model.state_dict(),
