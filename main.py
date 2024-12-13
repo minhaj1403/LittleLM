@@ -22,4 +22,3 @@ if __name__ == "__main__":
         learning_rate=learning_rate,
         checkpoint_path=checkpoint_path
     )
-    print("Training Complete!")
