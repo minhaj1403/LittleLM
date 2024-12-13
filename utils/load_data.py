@@ -5,10 +5,10 @@ import mmap
 import random
 import torch
 from config import device, block_size, batch_size
-from vocab import encode
 
-def get_random_chunk(split, train_split='data/train_split.txt', val_split='data/val_split.txt'):
+def get_random_chunk(split, train_split='../data/train_split.txt', val_split='../data/val_split.txt', vocab_path='../data/vocab.txt'):
     filename = train_split if split == 'train' else val_split
+    _, _, encode, _ = create_mappings(open(vocab_path, 'r', encoding='utf-8').read())
     with open(filename, 'r', encoding='utf-8') as f:
         with mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ) as mm:
             file_size = len(mm)
@@ -22,13 +22,20 @@ def get_random_chunk(split, train_split='data/train_split.txt', val_split='data/
 
     return data
 
-def get_batch(split, train_split='data/train_split.txt', val_split='data/val_split.txt'):
+def get_batch(split, train_split='../data/train_split.txt', val_split='../data/val_split.txt'):
     data = get_random_chunk(split, train_split, val_split)
     ix = torch.randint(len(data) - block_size, (batch_size,))
     x = torch.stack([data[i:i + block_size] for i in ix])
     y = torch.stack([data[i + 1:i + block_size + 1] for i in ix])
     x, y = x.to(device), y.to(device)
     return x, y
+
+def create_mappings(content):
+    string_to_int = {ch: i for i, ch in enumerate(sorted(set(content)))}
+    int_to_string = {i: ch for i, ch in enumerate(sorted(set(content)))}
+    encode = lambda s: [string_to_int[c] for c in s]
+    decode = lambda l: ''.join([int_to_string[i] for i in l])
+    return string_to_int, int_to_string, encode, decode
 
 
 def xz_files_in_dir(directory):
@@ -61,5 +68,11 @@ def prepare_data(folder_path, output_file_train, output_file_val):
                 text = f.read()
                 outfile.write(text)
                 vocab.update(set(text))
+
+    vocab_file = os.path.join(folder_path, 'vocab.txt')
+    with open(vocab_file, 'w', encoding='utf-8') as f:
+        for word in sorted(vocab):
+            f.write(word + '\n')
+    print(f"Vocabulary saved to {vocab_file}.\n")
     
     return vocab
