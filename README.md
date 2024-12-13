@@ -18,10 +18,10 @@ LittleLM is a self-made project for building a Language Model (LM). This project
     cd LittleLM
     ```
 
-2. Create a virtual environment and activate it:
+2. Create a Conda environment with Python 3.12.1 and activate it:
     ```sh
-    python -m venv venv
-    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+    conda create -n littlelm python=3.12.1 -y
+    conda activate littlelm
     ```
 
 3. Install the required packages:
