@@ -65,7 +65,7 @@ class Block(nn.Module):
         x = self.ln2(x + y)
         return x
 
-class GPTLanguageModel(nn.Module):
+class LittleLM(nn.Module):
     def __init__(self, vocab_size):
         super().__init__()
         self.token_embedding_table = nn.Embedding(vocab_size, n_embd)
