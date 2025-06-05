@@ -8,11 +8,13 @@ from config import device, block_size, batch_size
 
 def get_random_chunk(split, train_split='../data/train_split.txt', val_split='../data/val_split.txt', vocab_path='../data/vocab.txt'):
     filename = train_split if split == 'train' else val_split
-    _, _, encode, _ = create_mappings(open(vocab_path, 'r', encoding='utf-8').read())
+    with open(vocab_path, 'r', encoding='utf-8') as vf:
+        _, _, encode, _ = create_mappings(vf.read())
     with open(filename, 'r', encoding='utf-8') as f:
         with mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ) as mm:
             file_size = len(mm)
-            start_pos = random.randint(0, file_size - block_size * batch_size)
+            max_offset = max(0, file_size - block_size * batch_size)
+            start_pos = random.randint(0, max_offset)
 
             mm.seek(start_pos)
             block = mm.read(block_size * batch_size - 1)
